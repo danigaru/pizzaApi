@@ -1,6 +1,7 @@
 package pizzaapi.web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +22,8 @@ public class PizzaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PizzaEntity>> getAll() {
-        return ResponseEntity.ok(pizzaService.getAll());
+    public ResponseEntity<Page<PizzaEntity>> getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size) {
+        return ResponseEntity.ok(pizzaService.getAll(page, size));
     }
 
     @GetMapping("/{idPizza}")
@@ -39,6 +40,26 @@ public class PizzaController {
     @GetMapping("/name/{name}")
     public ResponseEntity<PizzaEntity> getByName(@PathVariable String name) {
         return ResponseEntity.ok(this.pizzaService.getByName(name));
+    }
+
+    @GetMapping("/with/description/{description}")
+    public ResponseEntity<List<PizzaEntity>> getAllWithDescription(@PathVariable String description) {
+        return ResponseEntity.ok(this.pizzaService.getAllWithDescription(description));
+    }
+
+    @GetMapping("/without/description/{description}")
+    public ResponseEntity<List<PizzaEntity>> getAllWithoutDescription(@PathVariable String description) {
+        return ResponseEntity.ok(this.pizzaService.getAllWithout(description));
+    }
+
+    @GetMapping("/cheapest/{price}")
+    public ResponseEntity<List<PizzaEntity>> getCheapest(@PathVariable double price) {
+        return ResponseEntity.ok(this.pizzaService.getCheapest(price));
+    }
+
+    @GetMapping("/greater/{price}")
+    public ResponseEntity<List<PizzaEntity>> getGreater(@PathVariable double price) {
+        return ResponseEntity.ok(this.pizzaService.getGreater(price));
     }
 
     @PostMapping

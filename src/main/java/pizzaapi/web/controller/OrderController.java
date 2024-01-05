@@ -28,4 +28,14 @@ public class OrderController {
         items.forEach(orderEntity -> System.out.println(orderEntity.getCustomer().getName()));
         return ResponseEntity.ok(items);
     }
+
+    @GetMapping("/today")
+    public ResponseEntity<List<OrderEntity>> getTodayOrders() {
+        return ResponseEntity.ok(this.orderService.getTodayOrders());
+    }
+
+    @GetMapping("/outside")
+    public ResponseEntity<List<OrderEntity>> getOutsideOrders() {
+        return ResponseEntity.ok(this.orderService.getOutSideOrders());
+    }
 }
