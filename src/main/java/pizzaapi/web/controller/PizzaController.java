@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pizzaapi.persitence.entity.PizzaEntity;
 import pizzaapi.service.PizzaService;
+import pizzaapi.service.dto.UpdatePizzaPriceDto;
 
 import java.util.List;
 
@@ -31,10 +32,12 @@ public class PizzaController {
         return ResponseEntity.ok(pizzaService.getPizza(idPizza));
     }
 
-    @GetMapping("/available")
-    public ResponseEntity<List<PizzaEntity>> getByAvailable() {
-        System.out.println(this.pizzaService.getByAvailable().size());
-        return ResponseEntity.ok(this.pizzaService.getByAvailable());
+        @GetMapping("/available")
+    public ResponseEntity<Page<PizzaEntity>> getByAvailable(@RequestParam(defaultValue = "0") int page,
+                                                            @RequestParam(defaultValue = "10") int size,
+                                                            @RequestParam(defaultValue = "price") String sortBy,
+                                                            @RequestParam(defaultValue = "ASC") String sortDirection) {
+        return ResponseEntity.ok(this.pizzaService.getByAvailable(page, size, sortBy, sortDirection));
     }
 
     @GetMapping("/name/{name}")
@@ -86,6 +89,22 @@ public class PizzaController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al editar datos" + e.getMessage());
         }
 
+    }
+
+    @PutMapping("/updatePrice")
+    public ResponseEntity<?> updatePrice(@RequestBody UpdatePizzaPriceDto pizzaPriceDto) {
+        try {
+
+            if(this.pizzaService.existPizza(pizzaPriceDto.getIdPizza())) {
+                this.pizzaService.updatePrice(pizzaPriceDto);
+                return ResponseEntity.status(HttpStatus.OK).body("Precio actualizado correctamente");
+            }
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La pizza no existe");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al actualizar precio " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/{idPizza}")
